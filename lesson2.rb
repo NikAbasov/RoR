@@ -11,7 +11,7 @@ ideal_weight = growth-110
 
 if 
   ideal_weight >0
-    puts "#{name},your ideal weight is #{ideal_weight} "
+    puts "#{name}, your ideal weight is #{ideal_weight} "
 
 else
   ideal_weight <0
