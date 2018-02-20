@@ -1,19 +1,20 @@
 class Route
-  attr_reader :stations
+  attr_accessor :stations
 
-  def initialize(from, to)
-    @stations = [from, to]
+  def initialize(start_stations, end_stations)
+    @stations = [start_stations, end_stations]
   end
 
   def add_station(station)
-    @stations.insert(-2, station)
+    stations.insert(-2, station)
   end
 
-  def remove_station(station)
-    @stations.delete(station) if @stations.index(station) > 0 && @stations.index(station) < @stations.size - 1  
+  def delete_station(station)
+    [stations.first, stations.last].include?(station) ? false : stations.delete(station)
   end
 
-  def show_stations
-    puts @stations.map { |station| station.name }
+  def stations_list
+    stations.each{ |station| puts station }
   end
+
 end

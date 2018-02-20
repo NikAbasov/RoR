@@ -1,64 +1,90 @@
 class Train
-  attr_reader :type, :number, :wagons, :speed, :route
+  WAGON_ACTION = [:up, :down]
+  attr_accessor :speed, :number, :type, :wagon
+  
 
-  def initialize(number, type, wagons)
+  def initialize(speed, number, wagons, type)
+    @speed = speed
     @number = number
-    @type = type
     @wagons = wagons
-    @speed = 0
+    @type = type
+  end
+  
+  
+  def up_speed(value)
+  @speed += value
+  puts "Внимание, скорость повышаеться на #{value}, и равна #{speed}"
   end
 
-  def accelerate(amount)
-    amount > 0 ? self.speed += amount : false
+  def down_speed(value)
+   speed -= value
+   puts "Внимание, скорость понижаеться на #{value}, и равна #{speed}"
   end
-
-  def decelerate(amount)
-    amount <= speed && amount > 0 ? self.speed -= amount : false
+  
+  def stop
+   speed = 0
   end
-
-  def attach_wagon
-    self.speed == 0 ? self.wagons += 1 : false
+  
+  def curent_speed
+   puts @speed
   end
-
-  def detach_wagon
-    self.speed == 0 && self.wagons > 0 ? self.wagons -= 1 : false
+  
+  def add_wagon(wagon)
+    if @speed.zero?
+      @wagons += 1 if @wagons > 0
+      else
+      puts "Сначала Остановите поезд"
+      end
   end
-
-  def set_route(route)
+  
+  def delete_wagon(wagon)
+    if @speed.zero?
+      @wagons -= 1 if @wagons > 0
+      else
+      puts "Сначала Остановите поезд"
+      end
+  end
+  		
+  def wagons_list
+   puts "Колличество вагонов в поезде = #{wagons}"
+  end
+  
+def add_route(route)
     @route = route
     @station_index = 0
-    current_station.train_arrival(self)
+    current_station.receive_train(self)
   end
 
   def current_station
-    route.stations[@station_index]
-  end
-
-  def move_next_station
-    return nil unless route
-    if current_station != route.stations.last
-      current_station.train_departure(self)
-      @station_index += 1
-      current_station.train_arrival(self)
-    end
-  end
-
-  def move_previous_station
-    return nil unless route
-    if current_station != route.stations.first
-      current_station.train_departure(self)
-      @station_index -= 1
-      current_station.train_arrival(self)
-    end
-  end
-
-  def previous_station
-    return nil unless route
-    @station_index != 0 ? route.stations[@station_index - 1] : false
+    @route.stations[@station_index]
   end
 
   def next_station
-    return nil unless route
-    route.stations[@station_index + 1]
+    @route.stations[@station_index + 1] if @station_index != @route.stations.size - 1
   end
+
+  def previous_station
+    @route.stations[@station_index - 1] if @station_index != 0
+  end
+
+  def go_next_station
+    if next_station != @route.stations.last
+      current_station.send_train(self)
+      @station_index += 1
+      current_station.receive_train(self)
+    else
+      current_station
+    end
+  end
+
+  def go_previous_station
+    if next_station != @route.stations.last
+      current_station.send_train(self)
+      @station_index -= 1
+      current_station.receive_train(self)
+    else
+      current_station
+    end
+  end
+
 end
