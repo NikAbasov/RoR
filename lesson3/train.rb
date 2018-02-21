@@ -27,16 +27,16 @@ class Train
   
    def add_vagon
     raise "Сначала остановите поезд" if moving?
-    wagons += 1
+    @wagons += 1
   end
 
   def remove_vagon
     raise "Сначала остановите поезд" if moving?
-    wagons -= 1 if wagons > 0
+    @wagons -= 1 if wagons > 0
   end
   		
   def wagons_list
-   puts wagons
+   puts @wagons
   end
   
   def accept_route(route)
