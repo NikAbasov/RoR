@@ -1,34 +1,27 @@
 class Station
 
-  attr_accessor :name, :trains, :cargo_nums, :passenger_nums
+  attr_reader :name, :trains
 
   def initialize(name)
     @name = name
-    @trains = {}
-    @cargo_nums = []
-    @passenger_nums = []
+    @trains = []
   end
   
   def add_train(train)
-    if train.type == 'cargo'
-      self.cargo_nums.push(train.num)
-    elsif train.type == 'passenger'
-      self.passenger_nums.push(train.num)
-    end
+    @trains << train 
   end
 
-  def delete_train(train)
-    trains.delete(train.num)
-      puts "Со станции #{name} отбыл поезд: #{train.num}"
+  def departure_train(train)
+    trains.delete(train)
   end
 
   def print_all_trains
-    puts "На станции #{name} находиться #{cargo_nums.size} грузовых и #{passenger_nums.size} пассажирских"
-    puts "Грузовые:"
-    puts self.cargo_nums.each { |train| " #{train} \n" } 
-    puts "Пассажирские:"
-    puts self.passenger_nums.each { |train| " #{train} \n" } 
+   puts trains
   end
 
+  def trains_by_type(type)
+    trains.select { |train| train.type == type } 
+  end
+ 
 end
 

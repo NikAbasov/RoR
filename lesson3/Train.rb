@@ -1,6 +1,5 @@
 class Train
-  attr_accessor :speed, :number, :type, :wagon, :current_station, :route        
-  
+  attr_reader :speed, :wagons, :current_station_index
 
   def initialize(number,type, wagons)
     @speed = 0
@@ -10,49 +9,46 @@ class Train
     @route = []
   end
   
-  
   def up_speed(value)
-  @speed += value
-  puts "Внимание, скорость повышаеться на #{value}, и равна #{speed}"
+   @speed += value
   end
 
-  def down_speed(value)
-   speed -= value
-   puts "Внимание, скорость понижаеться на #{value}, и равна #{speed}"
-  end
-  
   def stop
    @speed = 0
   end
   
+  def moving?
+    @speed > 0
+  end
+
   def curent_speed
    puts @speed
   end
   
-  def add_wagon(wagons)
-    if @speed.zero?
-      @wagons += 1 if @wagons > 0
-      else
-      puts "Сначала Остановите поезд"
-      end
+   def add_vagon
+    raise "Сначала остановите поезд" if moving?
+    wagons += 1
   end
-  
-  def delete_wagon(wagons)
-    if @speed.zero?
-      @wagons -= 1 if @wagons > 0
-      else
-      puts "Сначала Остановите поезд"
-      end
+
+  def remove_vagon
+    raise "Сначала остановите поезд" if moving?
+    wagons -= 1 if wagons > 0
   end
   		
   def wagons_list
-   puts "Колличество вагонов в поезде = #{wagons}"
+   puts wagons
   end
   
   def accept_route(route)
-   @route = route.route
-   self.current_station = self.route.first
-   puts "Поезд находится на станции #{current_station} и поедет по марщруту #{self.route.first} - #{self.route.last}"
+   clear_route
+
+    route = route
+    route.stations[0].add_train
+    current_station_index = 0
+  end
+
+  def current_station
+  route.stations[current_station_index]
   end
 
   def print_next_station
@@ -92,4 +88,3 @@ class Train
   end
 
 end
-

@@ -1,26 +1,20 @@
 class Route
-  attr_accessor :route
 
-  def initialize(first, last)
-    @route = [first, last]
+  attr_reader :stations
+
+  def initialize(station_start, station_finish)
+    @stations = [station_start, station_finish]
   end
 
   def add_station(station)
-     route.insert(-2, station)
-    puts "В маршрут была добавлена станция #{station}"
+    stations.insert(-2, station)
   end
 
-  def delete_station(station)
-    if station == @route[0] || station == @route.last
-      puts "Это конечная станция, ее нельзя удалять!"
-    else
-      route.delete(station)
-      puts "Из маршрута была удалена станция #{station}"
-    end
+  def remove_station(station)
+    stations.delete(station) unless [stations[0], stations[-1]].include? station
   end
-
-  def print_all_stations
-    puts route 
+  
+  def show_stations
+    print stations
   end
-
 end
