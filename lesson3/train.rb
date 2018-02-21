@@ -25,12 +25,12 @@ class Train
    puts @speed
   end
   
-   def add_vagon
+   def add_wagon
     raise "Сначала остановите поезд" if moving?
     @wagons += 1
   end
 
-  def remove_vagon
+  def remove_2agon
     raise "Сначала остановите поезд" if moving?
     @wagons -= 1 if wagons > 0
   end
@@ -40,24 +40,22 @@ class Train
   end
   
   def accept_route(route)
-   clear_route
-
-    route = route
-    route.stations[0].add_train
-    current_station_index = 0
+   route = route
+   route.stations[0].add_train
+   current_station_index = 0
   end
 
   def current_station
-  route.stations[current_station_index]
+   route.stations[current_station_index]
   end
 
   def print_next_station
-    if self.current_station == self.route.last
-     puts "Это последняя станция"
+   if self.current_station == self.route.last
+    puts "Это последняя станция"
     else
      next_station = self.route[self.route.index(self.current_station) + 1]
      puts "Следущая станция #{next_station}"
-    end
+   end
   end
 
   def print_prev_station
