@@ -15,6 +15,6 @@ class Route
   end
   
   def show_stations
-   @stations
+   puts @stations
   end
 end
