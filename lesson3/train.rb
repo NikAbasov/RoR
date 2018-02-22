@@ -7,14 +7,22 @@ class Train
     @wagons = wagons
     @type = type
     @route = []
+    @current_station_index =[]
   end
   
   def up_speed(value)
-   @speed += value
+    @speed += value
   end
 
+  def down_speed(value)
+    if value > @speed
+      puts "no"
+    else
+      @speed -= value
+    end
+  end
   def stop
-   @speed = 0
+    @speed = 0
   end
   
   def moving?
@@ -22,67 +30,60 @@ class Train
   end
 
   def curent_speed
-   puts @speed
+    @speed
   end
   
-   def add_wagon
-    raise "Сначала остановите поезд" if moving?
-    @wagons += 1
+  def add_wagon
+    if moving? 
+      puts "Сначала остановите поезд"
+    else
+      @wagons += 1
+    end
   end
 
-  def remove_2agon
-    raise "Сначала остановите поезд" if moving?
-    @wagons -= 1 if wagons > 0
+  def remove_wagon
+    if moving?
+      puts "Сначала остановите поезд"
+    else
+      @wagons -= 1 if wagons > 0
+    end
   end
-  		
+      
   def wagons_list
-   puts @wagons
+    @wagons
   end
   
-  def accept_route(route)
-   route = route
-   route.stations[0].add_train
-   current_station_index = 0
+  def take_route(route)
+    @route = route
+    @current_station_index = 0
+    self.current_station
   end
+ 
+ def current_station
+   @route.stations[@current_station_index]
+ end
 
-  def current_station
-   route.stations[current_station_index]
-  end
+ def previous_station
+   @route.stations[@current_station_index - 1] if @current_station_index > 0
+ end
 
-  def print_next_station
-   if self.current_station == self.route.last
-    puts "Это последняя станция"
-    else
-     next_station = self.route[self.route.index(self.current_station) + 1]
-     puts "Следущая станция #{next_station}"
-   end
-  end
+ def move_forward
+    unless next_station.nil?
+      current_station.departure_train(self)
+      next_station.add_train(self)
+      @current_station_index += 1 
+    end
+ end
 
-  def print_prev_station
-    if self.current_station == self.route.first
-      puts "Это первая станция"
-    else
-      prev_station = self.route[self.route.index(self.current_station) - 1]
-      puts "Предыдущая станция #{prev_station}"
+  def move_back
+    unless previous_station.nil?
+      current_station.send_train(self)
+      previous_station.receive_train(self)
+      @current_station_index -= 1
     end
   end
 
-  def go_next_station
-    self.current_station = self.route[self.route.index(self.current_station) + 1]
-    puts "Поезд приехал на станцию #{self.current_station}"
-    puts "Это конечная станция, можно ехать обратно" if self.current_station == self.route.last
-  end
-
-  def go_prev_station
-    if self.current_station == self.route.first
-      puts "Это первая станция, можно ехать только вперед"
-    elsif 
-      self.current_station != self.route.last
-      puts "Это еще не конечная станция, едем вперед" 
-    else 
-      self.current_station == self.route[self.route.index(self.current_station) - 1]
-      puts "Поезд приехал на станцию #{self.current_station}"
-    end
-  end
-
+ def next_station
+   @route.stations[@current_station_index + 1] if @route.stations.size > @current_station_index + 1
+ end 
 end
