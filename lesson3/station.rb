@@ -1,5 +1,4 @@
 class Station
-
   attr_reader :name, :trains
 
   def initialize(name)
@@ -16,11 +15,10 @@ class Station
   end
 
   def print_all_trains
-    @trains
+    puts @trains
   end
 
   def trains_by_type(type)
     @trains.select { |train| train.type == type } 
   end
- 
-end
+ end
