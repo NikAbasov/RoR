@@ -8,6 +8,6 @@ require_relative 'cargo_train'
 require_relative 'usrinterface'
 
 puts 'Пользовательский интерфейс'
-UsrInterface = UsrInterface.new
-UsrInterface.menu
-UsrInterface.control
+usrinterface = UsrInterface.new
+usrinterface.menu
+usrinterface.control

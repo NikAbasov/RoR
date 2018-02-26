@@ -1,9 +1,10 @@
 class Train
   attr_reader :speed, :wagons
 
-  def initialize(number)
+  def initialize(number, type)
     @speed = 0
-    @number = 0
+    @number = number
+    @type = type
     @wagons = []
   end
 
@@ -26,12 +27,13 @@ class Train
   def moving?
     @speed > 0
   end
-  def add_wagon
-    moving? ? puts "Сначала остановите поезд" : @wagons += 1
+
+  def add_wagon(wagon)
+    @wagons.insert(-2, wagon)
   end
 
-  def remove_wagon
-    moving? ? puts "Сначала остановите поезд" : @wagons -= 1 if wagons > 0
+  def remove_wagon(wagon)
+    @wagons.delete(wagon) unless [@wagons[0], @wagons[-1]].include? wagon
   end
 
   def take_route(route)
@@ -58,8 +60,8 @@ class Train
 
   def move_back
     unless previous_station.nil?
-      current_station.send_train(self)
-      previous_station.receive_train(self)
+      current_station.departure_train(self)
+      previous_station.add_train(self)
       @current_station_index -= 1
     end
   end
