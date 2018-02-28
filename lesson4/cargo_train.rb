@@ -1,9 +1,7 @@
 class CargoTrain < Train
-
-	def initialize(number)
-    @speed = 0
-    @number = number
-    @wagons = []
-    @type = {}
+attr_accessor :number, :type
+  def initialize(number)
+    super
   end
+
 end
