@@ -278,5 +278,3 @@ class UsrInterface
     station = @stations[gets.to_i - 1]
   end
 end
-
-
