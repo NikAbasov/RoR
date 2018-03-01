@@ -1,5 +1,5 @@
 class PasangerTrain < Train
-  attr_accessor :number, :type
+  attr_accessor :number, :type, :wagons
 
   def initialize(number)
     super

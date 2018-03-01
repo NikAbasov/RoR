@@ -170,20 +170,20 @@ class UsrInterface
       show_trains
       puts "Введите индекс поезда для добавления вагонов"
       num = gets.to_i
-      if @trains.count >= num
-        current_train = @trains[num - 1]
+      if @trains.count >= 0
+        current_train = @trains[num- 1]
         puts "Список вагонов в депо:"
         wagon_list
         puts "Выберете вагон по индексу:"
         choice = gets.to_i
-        wagon = @wagons[choice]
-        if current_train.class == CargoTrain && wagon.type == "Cargo" && wagon != nil
+        wagon = @wagons[choice - 1]
+        if current_train.class == CargoTrain && wagon.type == "Cargo"
           current_train.add_wagon(wagon)
-          @wagons.slice!(1)
+          @wagons.slice!(choice)
           puts "К поезду №#{current_train.number} прицеплен один грузовой вагон. #{current_train}"
-        elsif current_train.class == PasangerTrain &&  wagon.type == "Pasanger" && wagon != nil
+        elsif current_train.class == PasangerTrain &&  wagon.type == "Pasanger"
           current_train.add_wagon(wagon)
-          @wagons.slice!(1)
+          @wagons.slice!(choice)
           puts "К поезду №#{current_train.number} прицеплен один пассажтрский вагон."
         else
           puts "Этот вагон не подойдет"
@@ -205,14 +205,13 @@ class UsrInterface
     puts "Введите индекс поезда для отцепления вагонов"
     num = gets.to_i
     if @trains.count >= num
-      current_train = @trains
-      end
-      if current_train.count > 0
+      current_train = @trains[num]
+      if current_train.wagons.size > 0
         puts "Выберете вагон для отцепления:"
         current_train.wagons.each_with_index { |wagon, index| puts "#{index + 1}) #{wagon.type}"}
         wagon_choice = gets.to_i
         @wagons << wagon_choice
-        current_train.delete(wagon_choice)
+        current_train.slice!(wagon_choice)
         puts "От поезда #{current_train.number} отцеплен один вагон."
       else
         puts "Все вагоны уже отцеплены"
@@ -220,6 +219,7 @@ class UsrInterface
     else
       puts "Ошибка! Не верный индекс."
   end
+end
 
   def forward
     train = train_choice
@@ -278,3 +278,4 @@ class UsrInterface
     station = @stations[gets.to_i - 1]
   end
 end
+
