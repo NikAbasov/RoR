@@ -1,6 +1,6 @@
 class CargoWagon < Wagon
 
-  def initialize
+  def initialize()
     @type = "Cargo"
     super
   end

@@ -4,7 +4,7 @@ class Train
   def initialize(number)
     @speed = 0
     @number = number
-    @wagons = wagons
+    @wagons = []
   end
 
   def up_speed(value)
@@ -28,7 +28,7 @@ class Train
   end
 
   def add_wagon(wagon)
-    @coaches << wagon if @speed == 0 && self.type == wagon.type
+    @wagons << wagon if @speed == 0 && type == wagon.type
   end
 
   def remove_wagon(wagon)

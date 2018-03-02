@@ -180,11 +180,11 @@ class UsrInterface
         if current_train.class == CargoTrain && wagon.type == "Cargo"
           current_train.add_wagon(wagon)
           @wagons.slice!(choice)
-          puts "К поезду №#{current_train.number} прицеплен один грузовой вагон. #{current_train}"
+          puts "К поезду № #{current_train.number} прицеплен один грузовой вагон. #{current_train}"
         elsif current_train.class == PasangerTrain &&  wagon.type == "Pasanger"
           current_train.add_wagon(wagon)
           @wagons.slice!(choice)
-          puts "К поезду №#{current_train.number} прицеплен один пассажтрский вагон."
+          puts "К поезду № #{current_train.number} прицеплен один пассажтрский вагон. #{current_train}"
         else
           puts "Этот вагон не подойдет"
           return
@@ -201,25 +201,28 @@ class UsrInterface
       return
     end
     puts "Список поездов:"
+    puts "********@trains: #{@trains}"
     show_trains
     puts "Введите индекс поезда для отцепления вагонов"
     num = gets.to_i
     if @trains.count >= num
-      current_train = @trains[num]
-      if current_train.wagons.size > 0
+    current_train = @trains[num - 1]
+    puts "********current_train: #{current_train}"
+    puts "********current_train.wagons: #{current_train}"
+    if current_train.wagons && current_train.wagons.size > 0
         puts "Выберете вагон для отцепления:"
-        current_train.wagons.each_with_index { |wagon, index| puts "#{index + 1}) #{wagon.type}"}
+        current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
         wagon_choice = gets.to_i
-        @wagons << wagon_choice
-        current_train.slice!(wagon_choice)
+        @wagons << current_train.wagons[wagon_choice - 1]
+        current_train.wagons.slice!(wagon_choice)
         puts "От поезда #{current_train.number} отцеплен один вагон."
       else
         puts "Все вагоны уже отцеплены"
         end
     else
       puts "Ошибка! Не верный индекс."
+    end
   end
-end
 
   def forward
     train = train_choice
@@ -245,11 +248,11 @@ end
     end
 
   def show_trains
-    @trains.each.with_index(1) {|train, index| puts "#{index}) - #{train.number}"}
+    @trains.each_with_index { |train, index| puts "#{index + 1}) Поезд №#{train.number} #{train.type}"}
   end
 
   def wagon_list
-    @wagons.each_with_index { |wagon, index| puts "#{index}) #{wagon.type}" }
+    @wagons.each_with_index { |wagon, index| puts "#{index + 1}) #{wagon.type}" }
   end
 
   def show_stations
