@@ -1,7 +1,6 @@
 class PasangerTrain < Train
-  attr_accessor :number, :type, :wagons
 
-  def initialize(type)
+  def initialize(number)
     @type = "Pasanger"
     super
   end

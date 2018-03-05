@@ -95,18 +95,18 @@ class UsrInterface
     if @stations.size < 2
       puts "Сначала добавте станции"
     else
-    puts "Выберите начальную станцию маршрута по индексу:"
-    show_stations
-    station_start = @stations[gets.to_i - 1]
-    @stations.delete(station_start)
-    puts "Выберите конечную станцию маршрута по индексу: "
-    show_stations
-    station_finish = @stations[gets.to_i - 1]
-    route = Route.new(station_start, station_finish)
-    @routes << route
-    @stations.delete(station_finish)
-    show_routes
-      end
+      puts "Выберите начальную станцию маршрута по индексу:"
+      show_stations
+      station_start = @stations[gets.to_i - 1]
+      @stations.delete(station_start)
+      puts "Выберите конечную станцию маршрута по индексу: "
+      show_stations
+      station_finish = @stations[gets.to_i - 1]
+      route = Route.new(station_start, station_finish)
+      @routes << route
+      @stations.delete(station_finish)
+      show_routes
+    end
   end
 
   def add_station
@@ -133,10 +133,10 @@ class UsrInterface
     if @routes.empty?
       puts "Нет иаршрутов для добавления"
     else
-    train = train_choice
-    route = route_choice
-    train.take_route(route)
-      end
+      train = train_choice
+      route = route_choice
+      train.take_route(route)
+    end
   end
 
   def new_wagon
@@ -179,11 +179,11 @@ class UsrInterface
         wagon = @wagons[choice - 1]
         if current_train.class == CargoTrain && wagon.type == "Cargo"
           current_train.add_wagon(wagon)
-          @wagons.slice!(choice)
+          @wagons.slice!(choice - 1)
           puts "К поезду № #{current_train.number} прицеплен один грузовой вагон. #{current_train}"
         elsif current_train.class == PasangerTrain &&  wagon.type == "Pasanger"
           current_train.add_wagon(wagon)
-          @wagons.slice!(choice)
+          @wagons.slice!(choice - 1)
           puts "К поезду № #{current_train.number} прицеплен один пассажтрский вагон. #{current_train}"
         else
           puts "Этот вагон не подойдет"
@@ -206,21 +206,23 @@ class UsrInterface
     puts "Введите индекс поезда для отцепления вагонов"
     num = gets.to_i
     if @trains.count >= num
-    current_train = @trains[num - 1]
-    puts "********current_train: #{current_train}"
-    puts "********current_train.wagons: #{current_train}"
+      current_train = @trains[num - 1]
+      puts "********current_train: #{current_train}"
+      puts "********current_train.wagons: #{current_train}"
     if current_train.wagons && current_train.wagons.size > 0
-        puts "Выберете вагон для отцепления:"
-        current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
-        wagon_choice = gets.to_i
+      puts "Выберете вагон для отцепления:"
+      current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
+      wagon_choice = gets.to_i
+      if current_train.wagons.include?(wagon_choice - 1)
         @wagons << current_train.wagons[wagon_choice - 1]
         current_train.wagons.slice!(wagon_choice)
         puts "От поезда #{current_train.number} отцеплен один вагон."
       else
         puts "Все вагоны уже отцеплены"
-        end
+      end
     else
       puts "Ошибка! Не верный индекс."
+    end
     end
   end
 
@@ -237,18 +239,11 @@ class UsrInterface
   end
 
   def trains_on_station
-    if Station.trains.size > 1
-      station_choice
-      station = gets.chomp.to_i - 1
-      @stations[station].trains.each { |train| puts "Поезд: #{train}." }
-    else
-      puts"добавьте поезд"
-      return
-    end
+    print_all_trains
     end
 
   def show_trains
-    @trains.each_with_index { |train, index| puts "#{index + 1}) Поезд №#{train.number} #{train.type}"}
+    @trains.each_with_index { |trains, index| puts "#{index + 1}) Поезд №#{trains.number} #{trains.type}"}
   end
 
   def wagon_list
@@ -256,7 +251,7 @@ class UsrInterface
   end
 
   def show_stations
-    @stations.each.with_index(1) {|station, index| puts "#{index}) - #{station}"}
+    @stations.each.with_index(1) {|station, index| puts "#{index}) - #{station.name}"}
   end
 
   def show_routes
