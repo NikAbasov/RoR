@@ -285,7 +285,7 @@ end
       show_stations
       puts "Выберете индекс станции для просмотра списка поездов на ней"
       num = gets.to_i
-      if num > 0 && num <= @stations.last
+      if num > 0 && num <= @stations.length
         puts "На стации #{@stations[num - 1].name} находятся:"
         @stations[num - 1].trains_list
       else
