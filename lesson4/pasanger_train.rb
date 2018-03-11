@@ -1,7 +1,6 @@
 class PasangerTrain < Train
 
-  def initialize(number)
-    @type = "Pasanger"
+  def initialize(number, type)
     super
   end
 end

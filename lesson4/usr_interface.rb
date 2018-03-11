@@ -54,7 +54,7 @@ class UsrInterface
         when '12'
           show_stations
         when '13'
-          trains_on_station
+          trains_on_station_list
         when '0', 'exit'
           exit
         else
@@ -80,10 +80,10 @@ class UsrInterface
     puts "2. Грузовой"
     type = gets.chomp.to_i
     if type == 1
-      @trains << PasangerTrain.new(number)
+      @trains << PasangerTrain.new(number, "Pasanger")
       puts "Пассажирский поезд #{number} успешно добавлен!"
     elsif type == 2
-      @trains << CargoTrain.new(number)
+      @trains << CargoTrain.new(number, "Cargo")
       puts "Грузовой поезд #{number} успешно добавлен!"
     else
       puts "Ошибка, повторите попытку ещё раз!"
@@ -94,18 +94,21 @@ class UsrInterface
   def new_route
     if @stations.size < 2
       puts "Сначала добавте станции"
+      new_station
     else
       puts "Выберите начальную станцию маршрута по индексу:"
       show_stations
       station_start = @stations[gets.to_i - 1]
-      @stations.delete(station_start)
       puts "Выберите конечную станцию маршрута по индексу: "
       show_stations
       station_finish = @stations[gets.to_i - 1]
-      route = Route.new(station_start, station_finish)
-      @routes << route
-      @stations.delete(station_finish)
-      show_routes
+      if station_finish != station_start
+        route = Route.new(station_start, station_finish)
+        @routes << route
+        show_routes
+      else
+        "Станция в списке"
+      end
     end
   end
 
@@ -144,11 +147,11 @@ class UsrInterface
     puts "Введите 2 для создания пассажирский вагона"
     wagon_choise = gets.to_i
     if wagon_choise == 1
-      wagon = CargoWagon.new
+      wagon = CargoWagon.new("Cargo")
       @wagons << wagon
       puts "В депо добавлен новый грузовой вагон"
     elsif wagon_choise == 2
-      wagon = PasangerWagon.new
+      wagon = PasangerWagon.new("Pasanger")
       @wagons << wagon
       puts "В депо добавлен новый пассажирский вагон"
     else
@@ -170,30 +173,36 @@ class UsrInterface
       show_trains
       puts "Введите индекс поезда для добавления вагонов"
       num = gets.to_i
-      if @trains.count >= 0
-        current_train = @trains[num- 1]
+      if num > 0 && num <= @trains.length
+        current_train = @trains[num - 1]
         puts "Список вагонов в депо:"
         wagon_list
         puts "Выберете вагон по индексу:"
         choice = gets.to_i
+        if  choice > 0 && choice <= @wagons.length
         wagon = @wagons[choice - 1]
-        if current_train.class == CargoTrain && wagon.type == "Cargo"
-          current_train.add_wagon(wagon)
-          @wagons.slice!(choice - 1)
-          puts "К поезду № #{current_train.number} прицеплен один грузовой вагон. #{current_train}"
-        elsif current_train.class == PasangerTrain &&  wagon.type == "Pasanger"
-          current_train.add_wagon(wagon)
-          @wagons.slice!(choice - 1)
-          puts "К поезду № #{current_train.number} прицеплен один пассажтрский вагон. #{current_train}"
-        else
+         if current_train.class.to_s == "CargoTrain" && wagon.type.to_s == "Cargo"
+           current_train.add_wagon(wagon)
+           @wagons.slice!(choice - 1)
+           puts "К поезду № #{current_train.number} прицеплен один грузовой вагон. #{current_train}"
+         elsif current_train.class.to_s == "PasangerTrain" &&  wagon.type.to_s == "Pasanger"
+           current_train.add_wagon(wagon)
+           @wagons.slice!(choice - 1)
+           puts "К поезду № #{current_train.number} прицеплен один пассажтрский вагон. #{current_train}"
+         else
           puts "Этот вагон не подойдет"
           return
         end
       else
-        puts "Ошибка ввода"
+        puts "Ошибка"
+        return
+        end
+      else
+        puts "Ошибка"
         return
       end
-    end
+end
+
 
   def remove_wagon_from_train
     if @trains.empty?
@@ -201,28 +210,25 @@ class UsrInterface
       return
     end
     puts "Список поездов:"
-    puts "********@trains: #{@trains}"
     show_trains
     puts "Введите индекс поезда для отцепления вагонов"
     num = gets.to_i
-    if @trains.count >= num
-      current_train = @trains[num - 1]
-      puts "********current_train: #{current_train}"
-      puts "********current_train.wagons: #{current_train}"
-    if current_train.wagons && current_train.wagons.size > 0
-      puts "Выберете вагон для отцепления:"
-      current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
-      wagon_choice = gets.to_i
-      if current_train.wagons.include?(wagon_choice - 1)
+    if num > 0 && num <= @trains.length
+    current_train = @trains[num - 1]
+     if current_train.wagons.size > 0
+       puts "Выберете вагон для отцепления:"
+       current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
+       wagon_choice = gets.to_i
+      if wagon_choice > 0 && wagon_choice <= current_train.wagons.length
         @wagons << current_train.wagons[wagon_choice - 1]
-        current_train.wagons.slice!(wagon_choice)
+        current_train.wagons.slice!(wagon_choice-1)
         puts "От поезда #{current_train.number} отцеплен один вагон."
       else
-        puts "Все вагоны уже отцеплены"
+        puts "Ошибка"
       end
     else
-      puts "Ошибка! Не верный индекс."
-    end
+      puts "Ошибка"
+     end
     end
   end
 
@@ -243,11 +249,11 @@ class UsrInterface
     end
 
   def show_trains
-    @trains.each_with_index { |trains, index| puts "#{index + 1}) Поезд №#{trains.number} #{trains.type}"}
+    @trains.each_with_index { |trains, index| puts "#{index + 1}) Поезд №#{trains.number} #{trains.type} "}
   end
 
   def wagon_list
-    @wagons.each_with_index { |wagon, index| puts "#{index + 1}) #{wagon.type}" }
+    @wagons.each_with_index { |wagon, index| puts  "#{index + 1}) Вагон: #{wagon.type}" }
   end
 
   def show_stations
@@ -258,22 +264,33 @@ class UsrInterface
     @routes.each.with_index(1) {|route, index| puts "#{index}) - #{route}"}
   end
 
-  def route_choice
-    puts "Выберите маршрут по индексу:"
-    show_routes
-    route = @routes[gets.to_i - 1]
-  end
-
   def train_choice
     puts "Выберите поезд по индексу:"
     show_trains
     train = @trains[gets.to_i - 1]
   end
 
-  def station_choice
-    puts "Выберите станцию по индексу:"
-    show_stations
-    station = @stations[gets.to_i - 1]
+  def route_choice
+    puts "Выберите маршрут по индексу:"
+    show_routes
+    route = @routes[gets.to_i - 1]
+  end
+
+  def trains_on_station_list
+    if @stations.empty?
+      puts "Не создано станций"
+      new_station
+    else
+      puts "Список станций:"
+      show_stations
+      puts "Выберете индекс станции для просмотра списка поездов на ней"
+      num = gets.to_i
+      if num > 0 && num <= @stations.last
+        puts "На стации #{@stations[num - 1].name} находятся:"
+        @stations[num - 1].trains_list
+      else
+        puts "Ошибка"
+      end
+    end
   end
 end
-

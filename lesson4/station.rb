@@ -14,8 +14,8 @@ class Station
     @trains.delete(train)
   end
 
-  def print_all_trains
-    puts @trains
+  def trains_list
+    @trains.each { |x| puts "Поезд №#{x.number}" }
   end
 
   def trains_by_type(type)
