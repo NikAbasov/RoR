@@ -1,6 +1,6 @@
 class PasangerWagon < Wagon
 
-  def initialize(type)
-    super
+  def initialize
+    super("Pasanger")
   end
 end

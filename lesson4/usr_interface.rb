@@ -80,10 +80,10 @@ class UsrInterface
     puts "2. Грузовой"
     type = gets.chomp.to_i
     if type == 1
-      @trains << PasangerTrain.new(number, "Pasanger")
+      @trains << PasangerTrain.new(number)
       puts "Пассажирский поезд #{number} успешно добавлен!"
     elsif type == 2
-      @trains << CargoTrain.new(number, "Cargo")
+      @trains << CargoTrain.new(number)
       puts "Грузовой поезд #{number} успешно добавлен!"
     else
       puts "Ошибка, повторите попытку ещё раз!"
@@ -147,11 +147,11 @@ class UsrInterface
     puts "Введите 2 для создания пассажирский вагона"
     wagon_choise = gets.to_i
     if wagon_choise == 1
-      wagon = CargoWagon.new("Cargo")
+      wagon = CargoWagon.new
       @wagons << wagon
       puts "В депо добавлен новый грузовой вагон"
     elsif wagon_choise == 2
-      wagon = PasangerWagon.new("Pasanger")
+      wagon = PasangerWagon.new
       @wagons << wagon
       puts "В депо добавлен новый пассажирский вагон"
     else
@@ -192,16 +192,16 @@ class UsrInterface
          else
           puts "Этот вагон не подойдет"
           return
-        end
-      else
-        puts "Ошибка"
-        return
+         end
+        else
+          puts "Ошибка"
+          return
         end
       else
         puts "Ошибка"
         return
       end
-end
+  end
 
 
   def remove_wagon_from_train
@@ -219,15 +219,15 @@ end
        puts "Выберете вагон для отцепления:"
        current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
        wagon_choice = gets.to_i
-      if wagon_choice > 0 && wagon_choice <= current_train.wagons.length
-        @wagons << current_train.wagons[wagon_choice - 1]
-        current_train.wagons.slice!(wagon_choice-1)
-        puts "От поезда #{current_train.number} отцеплен один вагон."
-      else
-        puts "Ошибка"
-      end
-    else
-      puts "Ошибка"
+       if wagon_choice > 0 && wagon_choice <= current_train.wagons.length
+         @wagons << current_train.wagons[wagon_choice - 1]
+         current_train.wagons.slice!(wagon_choice-1)
+         puts "От поезда #{current_train.number} отцеплен один вагон."
+       else
+         puts "Ошибка"
+       end
+     else
+       puts "Ошибка"
      end
     end
   end

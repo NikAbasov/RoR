@@ -33,10 +33,6 @@ class Train
     @wagons << wagon if @speed == 0 && @type == wagon.type
   end
 
-  def remove_wagon(wagon)
-    @wagons.delete(wagon) unless [@wagons[0], @wagons[-1]].include? wagon
-  end
-
   def take_route(route)
     @route = route
     @current_station_index = 0
