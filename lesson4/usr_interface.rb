@@ -106,8 +106,8 @@ class UsrInterface
         route = Route.new(station_start, station_finish)
         @routes << route
         show_routes
-      else
-        "Станция в списке"
+        else
+        puts "Ошибка"
       end
     end
   end
@@ -134,7 +134,7 @@ class UsrInterface
 
   def add_route_to_train
     if @routes.empty?
-      puts "Нет иаршрутов для добавления"
+      puts "Нет маршрутов для добавления"
     else
       train = train_choice
       route = route_choice
@@ -203,8 +203,33 @@ class UsrInterface
       end
   end
 
-
-
+  def remove_wagon_from_train
+    if @trains.empty?
+      puts "Нет поездов - нет вагонов."
+      return
+    end
+    puts "Список поездов:"
+    show_trains
+    puts "Введите индекс поезда для отцепления вагонов"
+    num = gets.to_i
+    if num > 0 && num <= @trains.length
+      current_train = @trains[num - 1]
+      if current_train.wagons.size > 0
+        puts "Выберете вагон для отцепления:"
+        current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
+        wagon_choice = gets.to_i
+        if wagon_choice > 0 && wagon_choice <= current_train.wagons.length
+          @wagons << current_train.wagons[wagon_choice - 1]
+          current_train.remove_wagon(wagon_choice - 1)
+          puts "От поезда #{current_train.number} отцеплен один вагон."
+        else
+          puts "Вы вышли за пределы параметров"
+        end
+      else
+        puts "Ошибка"
+      end
+    end
+  end
 
   def forward
     train = train_choice
@@ -223,15 +248,15 @@ class UsrInterface
     end
 
   def show_trains
-    @trains.each_with_index { |trains, index| puts "#{index + 1}) Поезд №#{trains.number} #{trains.type} "}
-  end
-
-  def wagon_list
-    @wagons.each_with_index { |wagon, index| puts  "#{index + 1}) Вагон: #{wagon.type}" }
+    @trains.each_with_index { |trains, index| puts "#{index + 1}) Поезд № #{trains.number} #{trains.type} "}
   end
 
   def show_stations
     @stations.each.with_index(1) {|station, index| puts "#{index}) - #{station.name}"}
+  end
+
+  def wagon_list
+    @wagons.each_with_index { |wagon, index| puts  "#{index + 1}) Вагон: #{wagon.type}" }
   end
 
   def show_routes
@@ -253,7 +278,6 @@ class UsrInterface
   def trains_on_station_list
     if @stations.empty?
       puts "Не создано станций"
-      new_station
     else
       puts "Список станций:"
       show_stations

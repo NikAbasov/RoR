@@ -33,31 +33,11 @@ class Train
     @wagons << wagon if @speed == 0 && @type == wagon.type
   end
 
-  def remove_wagon_from_train
-    if @trains.empty?
-      puts "Нет поездов - нет вагонов."
-      return
-    end
-    puts "Список поездов:"
-    show_trains
-    puts "Введите индекс поезда для отцепления вагонов"
-    num = gets.to_i
-    if num > 0 && num <= @trains.length
-      current_train = @trains[num - 1]
-      if current_train.wagons.size > 0
-        puts "Выберете вагон для отцепления:"
-        current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
-        wagon_choice = gets.to_i
-        if wagon_choice > 0 && wagon_choice <= current_train.wagons.length
-          @wagons << current_train.wagons[wagon_choice - 1]
-          current_train.wagons.slice!(wagon_choice-1)
-          puts "От поезда #{current_train.number} отцеплен один вагон."
-        else
-          puts "Ошибка"
-        end
-      else
-        puts "Ошибка"
-      end
+  def remove_wagon(wagon)
+    if speed.zero?
+      @wagons.delete_at(wagon)
+    else
+      puts "остановите поезд"
     end
   end
 
