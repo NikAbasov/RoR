@@ -106,7 +106,7 @@ class UsrInterface
         route = Route.new(station_start, station_finish)
         @routes << route
         show_routes
-        else
+      else
         puts "Ошибка"
       end
     end
@@ -219,8 +219,9 @@ class UsrInterface
         current_train.wagons.each_with_index{|wagon,index| puts "#{index + 1}) #{wagon.type}" }
         wagon_choice = gets.to_i
         if wagon_choice > 0 && wagon_choice <= current_train.wagons.length
-          @wagons << current_train.wagons[wagon_choice - 1]
-          current_train.remove_wagon(wagon_choice - 1)
+          wagon = current_train.wagons[wagon_choice - 1]
+          @wagons << wagon
+          current_train.remove_wagon(wagon)
           puts "От поезда #{current_train.number} отцеплен один вагон."
         else
           puts "Вы вышли за пределы параметров"

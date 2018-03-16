@@ -35,7 +35,7 @@ class Train
 
   def remove_wagon(wagon)
     if speed.zero?
-      @wagons.delete_at(wagon)
+      @wagons.delete(wagon)
     else
       puts "остановите поезд"
     end
