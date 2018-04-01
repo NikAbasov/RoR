@@ -4,12 +4,10 @@ class Train
 
   attr_reader :speed, :wagons, :number, :type
 
-  class << self
-    attr_accessor :all
+  @@trains = {}
 
-    def find(num)
-      all[num]
-    end
+  def self.find(number)
+    @@trains[number]
   end
 
   def initialize(number, type)
@@ -18,7 +16,7 @@ class Train
     @type = type
     @wagons = []
     register_instanse
-    train_to_all
+    @@trains[number] = self
   end
 
   def up_speed(value)
@@ -81,10 +79,5 @@ class Train
 
   def next_station
     @route.stations[@current_station_index + 1] if @route.stations.size > @current_station_index + 1
-  end
-
-  def train_to_all
-    self.class.all ||= []
-    self.class.all << self
   end
 end
