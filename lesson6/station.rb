@@ -4,15 +4,17 @@ class Station
   attr_accessor :name
   attr_reader :trains
 
-  class << self
-    attr_accessor :all
+  @@stations = []
+
+  def self.all
+    @@stations
   end
 
   def initialize(name)
     @name = name
     @trains = []
     register_instanse
-    station_to_all
+    @@stations << self
   end
 
   def add_train(train)
@@ -29,12 +31,5 @@ class Station
 
   def trains_by_type(type)
     @trains.select { |train| train.type == type }
-  end
-
-  private
-
-  def station_to_all
-    self.class.all ||= []
-    self.class.all << self
   end
 end
