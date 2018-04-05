@@ -99,25 +99,21 @@ class UsrInterface
   end
 
   def new_route
-    if @stations.size < 2
-      puts "Сначала добавте станции"
-      new_station
-    else
+    begin
       puts "Выберите начальную станцию маршрута по индексу:"
       show_stations
       station_start = @stations[gets.to_i - 1]
       puts "Выберите конечную станцию маршрута по индексу: "
       show_stations
       station_finish = @stations[gets.to_i - 1]
-      if station_finish != station_start
-        route = Route.new(station_start, station_finish)
-        @routes << route
-        show_routes
-      else
-        puts "Ошибка"
-      end
+      route = Route.new(station_start, station_finish)
+      @routes << route
+      show_routes
+    rescue RuntimeError => e
+      puts e
+      retry
     end
-  end
+    end
 
   def add_station
     show_routes
@@ -175,39 +171,39 @@ class UsrInterface
     if @wagons.empty?
       puts "В депо нет вагонов. Создайте новые или отцепите имеющиеся"
       return
-      end
-      puts "Список поездов:"
-      show_trains
-      puts "Введите индекс поезда для добавления вагонов"
-      num = gets.to_i
-      if num > 0 && num <= @trains.length
-        current_train = @trains[num - 1]
-        puts "Список вагонов в депо:"
-        wagon_list
-        puts "Выберете вагон по индексу:"
-        choice = gets.to_i
-        if  choice > 0 && choice <= @wagons.length
+    end
+    puts "Список поездов:"
+    show_trains
+    puts "Введите индекс поезда для добавления вагонов"
+    num = gets.to_i
+    if num > 0 && num <= @trains.length
+      current_train = @trains[num - 1]
+      puts "Список вагонов в депо:"
+      wagon_list
+      puts "Выберете вагон по индексу:"
+      choice = gets.to_i
+      if  choice > 0 && choice <= @wagons.length
         wagon = @wagons[choice - 1]
-         if current_train.class.to_s == "CargoTrain" && wagon.type.to_s == "Cargo"
-           current_train.add_wagon(wagon)
-           @wagons.slice!(choice - 1)
-           puts "К поезду № #{current_train.number} прицеплен один грузовой вагон. #{current_train}"
-         elsif current_train.class.to_s == "PasangerTrain" &&  wagon.type.to_s == "Pasanger"
-           current_train.add_wagon(wagon)
-           @wagons.slice!(choice - 1)
-           puts "К поезду № #{current_train.number} прицеплен один пассажтрский вагон. #{current_train}"
-         else
-          puts "Этот вагон не подойдет"
-          return
-         end
+        if current_train.class.to_s == "CargoTrain" && wagon.type.to_s == "Cargo"
+          current_train.add_wagon(wagon)
+          @wagons.slice!(choice - 1)
+          puts "К поезду № #{current_train.number} прицеплен один грузовой вагон. #{current_train}"
+        elsif current_train.class.to_s == "PasangerTrain" &&  wagon.type.to_s == "Pasanger"
+          current_train.add_wagon(wagon)
+          @wagons.slice!(choice - 1)
+          puts "К поезду № #{current_train.number} прицеплен один пассажтрский вагон. #{current_train}"
         else
-          puts "Ошибка"
+          puts "Этот вагон не подойдет"
           return
         end
       else
         puts "Ошибка"
         return
       end
+    else
+      puts "Ошибка"
+      return
+    end
   end
 
   def remove_wagon_from_train
